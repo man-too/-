@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var str = "Visit W3School!";
+        var n = str.search(/w3School/i); 
+        console.log(n);
+        console.log(str.search(/w3School/g));
+        // 全局匹配，查找所有而非在找到第一个后停止
+        var j=str.replace(/w3School/i,"myhome");
+        console.log(j);
+        /w3/.test(str);
+    </script>
+</body>
+
+</html>

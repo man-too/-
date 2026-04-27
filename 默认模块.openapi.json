@@ -1,0 +1,584 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "默认模块",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/category/page/parent": {
+      "get": {
+        "summary": "分页&条件查询父分类",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": 10,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "categoryName",
+            "in": "query",
+            "description": "分组",
+            "required": false,
+            "example": "车",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "array": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "title": "分类ID"
+                              },
+                              "categoryName": {
+                                "type": "string",
+                                "title": "分类名称"
+                              },
+                              "status": {
+                                "type": "integer",
+                                "title": "状态"
+                              },
+                              "updateTime": {
+                                "type": "string",
+                                "title": "更新时间"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "categoryName",
+                              "status",
+                              "updateTime"
+                            ]
+                          },
+                          "title": "父类数据数组"
+                        }
+                      },
+                      "title": "父类数据",
+                      "required": [
+                        "array"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "返回信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/category/page/son": {
+      "get": {
+        "summary": "分页&条件查询子分类",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": 10,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "categoryName",
+            "in": "query",
+            "description": "分组",
+            "required": false,
+            "example": "婴",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "array": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "title": "分类ID"
+                              },
+                              "categoryName": {
+                                "type": "string",
+                                "title": "分类名称"
+                              },
+                              "parentName": {
+                                "type": "string",
+                                "title": "父分类名称"
+                              },
+                              "status": {
+                                "type": "integer",
+                                "title": "状态"
+                              },
+                              "updateTime": {
+                                "type": "string",
+                                "title": "更新时间"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "categoryName",
+                              "parentName",
+                              "status",
+                              "updateTime"
+                            ]
+                          }
+                        }
+                      },
+                      "title": "分类数据",
+                      "required": [
+                        "array"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "返回信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/category/add": {
+      "post": {
+        "summary": "新增分类",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "categoryName": {
+                    "type": "string",
+                    "title": "分类名称",
+                    "description": "分组"
+                  },
+                  "parentId": {
+                    "type": "integer",
+                    "description": "分组",
+                    "title": "父分类ID(没有则为父分类)"
+                  }
+                },
+                "required": [
+                  "categoryName"
+                ]
+              },
+              "example": {
+                "categoryName": "赵丽"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "nullable": true
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "返回信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/category/delete": {
+      "delete": {
+        "summary": "批量删除商品",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "ids",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "example": "47,48",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "title": "返回数据",
+                      "nullable": true
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "返回信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/category/edit": {
+      "put": {
+        "summary": "编辑分类",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "integer",
+                    "title": "分类ID"
+                  },
+                  "categoryName": {
+                    "type": "string",
+                    "title": "分类名"
+                  },
+                  "parentId": {
+                    "type": "integer",
+                    "title": "父分类ID",
+                    "nullable": true
+                  },
+                  "status": {
+                    "type": "integer",
+                    "title": "状态码(0:禁用,1启用)",
+                    "description": "状态",
+                    "nullable": true
+                  }
+                },
+                "required": [
+                  "id",
+                  "categoryName"
+                ]
+              },
+              "examples": {}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "nullable": true
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "返回信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/category/show": {
+      "get": {
+        "summary": "根据ID查询分类的信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "example": "分类ID",
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "title": "分类ID"
+                        },
+                        "categoryName": {
+                          "type": "string",
+                          "title": "分类名称"
+                        },
+                        "parentName": {
+                          "type": "string",
+                          "title": "父分类名称",
+                          "nullable": true
+                        },
+                        "status": {
+                          "type": "integer",
+                          "description": "状态",
+                          "title": "状态(0:禁用,1:启用)"
+                        }
+                      },
+                      "title": "分类信息",
+                      "required": [
+                        "categoryName",
+                        "status",
+                        "id"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "返回信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/category/status/{status}": {
+      "put": {
+        "summary": "启用停用分类",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "status",
+            "in": "path",
+            "description": "状态值",
+            "required": true,
+            "example": 1,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "id",
+            "in": "query",
+            "description": "分类id",
+            "required": false,
+            "example": 20,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {},
+                      "title": "数据",
+                      "nullable": true
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "返回信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}

@@ -1,0 +1,58 @@
+.table-wrapper {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin: 20px 0;
+}
+
+/* 表格本身 */
+.styled-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  font-size: 14px;
+  background-color: white;
+}
+
+/* 表头样式（建议添加 <thead>） */
+.styled-table thead tr {
+  background-color: #2c3e50;
+  color: #ffffff;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.styled-table th,
+.styled-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+/* 斑马纹：偶数行浅灰背景 */
+.styled-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa;
+}
+
+/* 悬停效果 */
+.styled-table tbody tr:hover {
+  background-color: #e9f0f9;
+  transition: background-color 0.2s ease;
+}
+
+/* 最后一行的底部边框去掉（避免与圆角重叠） */
+.styled-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* 移动端优化 */
+@media screen and (max-width: 600px) {
+  .styled-table {
+    font-size: 12px;
+  }
+  .styled-table th,
+  .styled-table td {
+    padding: 8px 10px;
+  }
+}

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #checkbox1 {
+            display: none;
+        }
+        .click{
+            padding: 8px 16px;
+            background:#333;
+            color: white;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .one{
+            width: 400px;
+            height: 100vh;
+            background: rgb(197, 237, 197);
+            transition:height 0.2s ease;
+        }
+         #checkbox1:checked+.click+.one .two{
+          height: 20px;
+         }
+    </style>
+</head>
+
+<body>
+    <input type="checkbox" id="checkbox1">
+    <label for="checkbox1" class="click">点击收起</label>
+    <div class="one">
+        <div class="two">
+            <ul>
+                <li>小米</li>
+                <li>华为</li>
+                <li>oppo</li>
+                <li>vivo</li>
+            </ul>
+        </div>
+        <div class="two">
+            <ul>
+                <li>三星</li>
+                <li>苹果</li>
+                <li>红米</li>
+                <li>iqoo</li>
+            </ul>
+        </div>
+    </div>
+</body>
+
+</html>

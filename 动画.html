@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        div {
+            height: 1000px;
+            width: 1000px;
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-image: url(./小姐姐.jpg);
+            animation: 小姐姐 10s steps(144) 0s infinite normal both;
+        }
+
+        div:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes 小姐姐 {
+            0% {
+                transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.001, 0, 0, 0, 1);
+                background-image: url(./小姐姐5.jpg);
+            }
+
+            50% {
+                transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.001, 0, 0, 0, 1);
+                background-image: url(./小姐姐3.jpg);
+            }
+
+            100% {
+                transform: matrix3d(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, -0.001, 0, 0, 0, 1);
+                background-image: url(./小姐姐4.jpg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div></div>
+</body>
+
+</html>

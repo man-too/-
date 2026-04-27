@@ -1,0 +1,879 @@
+<template>
+  <el-container>
+    <!-- 1. 顶部导航栏 -->
+    <el-header>
+      <div class="top-navbar">
+        <!-- 1.1 左侧 Logo 区域 -->
+        <div class="nav-left">
+          <div class="logo-text">云仓 ERP</div>
+        </div>
+        <!-- 1.2 右侧 用户信息区域 -->
+        <div class="nav-right">
+          <div class="user-info">
+            <!-- 头像 -->
+            <el-avatar :size="32" src="https://cube.elemecdn.com/3/7c/3ea6beec64369c2642b92c6726f1epng.png" />
+            <!-- 用户名 -->
+            <span class="username">hzh123</span>
+          </div>
+        </div>
+      </div>
+    </el-header>
+
+    <!-- 2. 主体内容 -->
+    <el-main>
+      <el-container>
+        <!-- 2.1 左侧菜单 -->
+        <el-aside>
+          <el-menu default-active="2" class="el-menu-vertical-demo">
+            <el-sub-menu index="1">
+              <template #title> <span>商品</span> </template>
+              <el-menu-item index="1-1" @click="toProduct">商品信息</el-menu-item>
+              <el-menu-item index="1-2" @click="toCategroy">分页管理</el-menu-item>
+            </el-sub-menu>
+            <el-sub-menu index="2">
+              <template #title> <span>订单</span> </template>
+              <el-menu-item index="2-1">订单信息</el-menu-item>
+            </el-sub-menu>
+            <el-sub-menu index="3">
+              <template #title> <span>仓库</span> </template>
+              <el-menu-item index="3-1">仓库信息</el-menu-item>
+            </el-sub-menu>
+          </el-menu>
+        </el-aside>
+
+        <!-- 2.2 右侧展示区 -->
+        <el-main>
+          <!-- 2.2.1 页面标题 -->
+          <el-container>
+            <el-header>
+              <h1 class="title">分类管理</h1>
+            </el-header>
+            <el-main>
+              <!-- 2.2.2 搜索筛选区 (优化版) -->
+              <div class="product-info-container">
+                <div class="search-section">
+                  <el-row :gutter="20" style="align-items: center; margin-bottom: 20px;">
+                    
+                    <!-- 1. 搜索输入框 -->
+                    <el-col :span="6">
+                      <div class="search-item">
+                        <label class="label_item">分类搜索:</label>
+                        <el-input
+                          v-model="searchKeyword"
+                          placeholder="输入关键词搜索分类"
+                        />
+                      </div>
+                    </el-col>
+
+                    <!-- 2. 搜索和重置按钮 -->
+                    <el-col :span="6">
+                      <div class="search-buttons">
+                        <el-button type="primary" @click="handleSearch">搜索</el-button>
+                        <el-button @click="resetForm">重置</el-button>
+                      </div>
+                    </el-col>
+
+                    <!-- 3. 操作按钮组 -->
+                    <el-col :span="12" style="display: flex; justify-content: flex-end; gap: 10px;">
+                      <!-- 新增分类按钮 -->
+                      <el-button 
+                        type="primary" 
+                        @click="openAddDialog"
+                      >
+                        新增分类
+                      </el-button class="add-btn-section">
+                      
+                      <!-- 批量删除按钮 -->
+                      <el-button 
+                        class="add-btn-section"
+                        type="danger" 
+                        @click="handleBatchDelete"
+                        :disabled="multipleSelection.length === 0"
+                      >
+                        批量删除
+                      </el-button>
+                    </el-col>
+                  </el-row>
+                </div>
+
+                <!-- 父类子类切换按钮 (放在表格上方) -->
+                <div class="action-section">
+                  <button class="add-btn-section" @click="switchTab('parent')">上级分类</button>
+                  <button class="add-btn-section" @click="switchTab('child')">分类名称</button>
+                </div>
+
+                <!-- 2.2.4 表格区域 (优化版) -->
+                <div class="table-section">
+                  
+                  <!-- 父类表格 -->
+                  <el-table
+                    v-if="activeTab === 'parent'"
+                    :data="parentTableData"
+                    style="width: 100%"
+                    max-height="500"
+                    @selection-change="handleSelectionChange"
+                    :row-class-name="tableRowClassName"
+                  >
+                    <!-- 多选框 -->
+                    <el-table-column type="selection" width="55" />
+                    <el-table-column prop="categoryName" label="分类名称" min-width="180" />
+                    
+                    <!-- 状态列 (使用 Switch) -->
+                    <el-table-column label="状态" min-width="180">
+                      <template #default="scope">
+                        <el-switch
+                          v-model="scope.row.status"
+                          :active-value="'启用'"
+                          :inactive-value="'禁用'"
+                          @change="toggleStatus(scope.row)"
+                        />
+                      </template>
+                    </el-table-column>
+                    
+                    <el-table-column prop="createTime" label="创建时间" min-width="180" />
+                    
+                    <!-- 操作列 -->
+                    <el-table-column label="操作" width="220">
+                      <template #default="scope">
+                        <el-button class="btn-text " @click="handleEdit(scope.row)">编辑</el-button>
+                        <el-button class="btn-text-danger" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+
+                  <!-- 子类表格 -->
+                  <el-table
+                    v-if="activeTab === 'child'"
+                    :data="childTableData"
+                    style="width: 100%"
+                    max-height="500"
+                    @selection-change="handleSelectionChange"
+                    :row-class-name="tableRowClassName"
+                  >
+                    <!-- 多选框 -->
+                    <el-table-column type="selection" width="55" />
+                    <!-- 注意：这里根据你的需求，第一列是上级分类，第二列是分类名称 -->
+                    <el-table-column prop="parentCategoryName" label="上级分类" min-width="180" />
+                    <el-table-column prop="categoryName" label="分类名称" min-width="180" />
+                    
+                    <!-- 状态列 -->
+                    <el-table-column label="状态" min-width="180">
+                      <template #default="scope">
+                        <el-switch
+                          v-model="scope.row.status"
+                          :active-value="'启用'"
+                          :inactive-value="'禁用'"
+                          @change="toggleStatus(scope.row)"
+                        />
+                      </template>
+                    </el-table-column>
+                    
+                    <el-table-column prop="createTime" label="创建时间" min-width="180" />
+                    
+                    <!-- 操作列 -->
+                    <el-table-column label="操作" width="220">
+                      <template #default="scope">
+                        <el-button class="btn-text" @click="handleEdit(scope.row)">编辑</el-button>
+                        <el-button class="btn-text-danger" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+                      </template>
+                    </el-table-column>
+                  </el-table>
+
+                  <!-- 分页组件 -->
+                  <div class="demo-pagination-block" style="margin-top: 20px; padding: 10px; background: #fff;">
+                    <el-pagination
+                      v-model:current-page="currentPage"
+                      v-model:page-size="pageSize"
+                      :page-sizes="[10, 20, 50, 100]"
+                      layout="total, sizes, prev, pager, next, jumper"
+                      :total="totalRecords"
+                    />
+                  </div>
+                </div>
+
+                <!-- 2.2.6 弹窗 (保留原样) -->
+                <el-dialog v-model="dialogVisible" :title="isEditing ? '编辑分类' : '添加分类'" width="500">
+                  <el-form :model="categoryForm" label-width="auto">
+                    <el-form-item label="分类名称">
+                      <el-input v-model="categoryForm.categoryName" placeholder="请输入分类名称" />
+                    </el-form-item>
+                    <el-form-item label="上级分类" v-if="!isEditing || activeTab === 'child'">
+                      <el-select v-model="categoryForm.parentId" placeholder="请选择上级分类" style="width: 100%;">
+                        <el-option 
+                          v-for="item in parentcategorylist" 
+                          :key="item.id" 
+                          :label="item.categoryName" 
+                          :value="item.id" 
+                        />
+                      </el-select>
+                    </el-form-item>
+                    <el-form-item label="状态">
+                      <el-select v-model="categoryForm.status" placeholder="请选择状态">
+                        <el-option label="启用" value="启用"></el-option>
+                        <el-option label="禁用" value="禁用"></el-option>
+                      </el-select>
+                    </el-form-item>
+                  </el-form>
+                  <template #footer>
+                    <div class="dialog-footer">
+                      <el-button @click="dialogVisible = false">取消</el-button>
+                      <el-button type="primary" @click="saveCategory">确定</el-button>
+                    </div>
+                  </template>
+                </el-dialog>
+              </div>
+            </el-main>
+          </el-container>
+        </el-main>
+      </el-container>
+    </el-main>
+  </el-container>
+</template>
+
+<script lang="ts" setup>
+// 仅保留响应式变量定义，不完善具体逻辑
+import { reactive, ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage, ElMessageBox } from "element-plus"
+
+// 模拟API接口
+const api = {
+  getparentcategory: async (params?: string) => {
+    try {
+      // 模拟API请求
+      console.log('请求父级分类，参数:', params);
+      
+      // 模拟成功响应
+      return {
+        code: 1,
+        msg: 'success',
+        data: [
+          {
+            id: '1',
+            categoryName: '电子产品',
+            status: '启用',
+            createTime: '2023-01-01 10:00:00',
+            parentCategoryName: '无'
+          },
+          {
+            id: '2',
+            categoryName: '服装',
+            status: '启用',
+            createTime: '2023-01-02 11:00:00',
+            parentCategoryName: '无'
+          },
+          {
+            id: '3',
+            categoryName: '食品',
+            status: '禁用',
+            createTime: '2023-01-03 12:00:00',
+            parentCategoryName: '无'
+          }
+        ]
+      };
+    } catch (error) {
+      console.error('获取父级分类失败:', error);
+      return {
+        code: 0,
+        msg: error instanceof Error ? error.message : '获取父级分类失败',
+        data: []
+      };
+    }
+  },
+  getsoncategory: async () => {
+    try {
+      // 模拟API请求
+      console.log('请求子级分类');
+      
+      // 模拟成功响应
+      return {
+        code: 1,
+        msg: 'success',
+        data: [
+          {
+            id: '101',
+            categoryName: '手机',
+            parentId: '1',
+            status: '启用',
+            createTime: '2023-01-04 13:00:00',
+            parentCategoryName: '电子产品'
+          },
+          {
+            id: '102',
+            categoryName: '电脑',
+            parentId: '1',
+            status: '启用',
+            createTime: '2023-01-05 14:00:00',
+            parentCategoryName: '电子产品'
+          },
+          {
+            id: '201',
+            categoryName: '男装',
+            parentId: '2',
+            status: '启用',
+            createTime: '2023-01-06 15:00:00',
+            parentCategoryName: '服装'
+          }
+        ]
+      };
+    } catch (error) {
+      console.error('获取子级分类失败:', error);
+      return {
+        code: 0,
+        msg: error instanceof Error ? error.message : '获取子级分类失败',
+        data: []
+      };
+    }
+  },
+  addcategory: async (data: any) => {
+    try {
+      console.log('添加分类，数据:', data);
+      
+      // 模拟成功响应
+      return {
+        code: 1,
+        msg: '添加成功',
+        data: null
+      };
+    } catch (error) {
+      console.error('添加分类失败:', error);
+      return {
+        code: 0,
+        msg: error instanceof Error ? error.message : '添加分类失败',
+        data: null
+      };
+    }
+  },
+  editcategory: async (data: any) => {
+    try {
+      console.log('编辑分类，数据:', data);
+      
+      // 模拟成功响应
+      return {
+        code: 1,
+        msg: '编辑成功',
+        data: null
+      };
+    } catch (error) {
+      console.error('编辑分类失败:', error);
+      return {
+        code: 0,
+        msg: error instanceof Error ? error.message : '编辑分类失败',
+        data: null
+      };
+    }
+  },
+  deletecategory: async (id: string) => {
+    try {
+      console.log('删除分类，ID:', id);
+      
+      // 模拟成功响应
+      return {
+        code: 1,
+        msg: '删除成功',
+        data: null
+      };
+    } catch (error) {
+      console.error('删除分类失败:', error);
+      return {
+        code: 0,
+        msg: error instanceof Error ? error.message : '删除分类失败',
+        data: null
+      };
+    }
+  },
+  showcategory: async (id: string) => {
+    try {
+      console.log('显示分类，ID:', id);
+      
+      // 模拟成功响应
+      return {
+        code: 1,
+        msg: 'success',
+        data: {}
+      };
+    } catch (error) {
+      console.error('显示分类失败:', error);
+      return {
+        code: 0,
+        msg: error instanceof Error ? error.message : '显示分类失败',
+        data: {}
+      };
+    }
+  }
+};
+
+// 原有变量 (保留)
+const currentPage = ref(1)
+const pageSize = ref(10)
+const totalRecords = ref(0) // 添加总记录数
+const dialogVisible = ref(false)
+const searchKeyword = ref('') // 统一的搜索关键词
+const isEditing = ref(false) // 是否处于编辑模式
+
+// --- 分类数据 ---
+const parentcategorylist = ref<any[]>([])
+const soncategorylist = ref<any[]>([])
+
+// --- 表格数据与选中 ---
+const activeTab = ref('parent') // 控制显示父类还是子类
+const parentTableData = ref<any[]>([])
+const childTableData = ref<any[]>([])
+const multipleSelection = ref<any[]>([]) // 存储选中的行
+
+// --- 新增/编辑表单 ---
+const categoryForm = reactive({
+  id: '',
+  categoryName: '',
+  parentId: '',
+  status: '启用',
+})
+
+// 原有生命周期和函数 (保留)
+onMounted(async () => {
+  // 初始化加载数据
+  await loadCategoryData()
+})
+
+const router = useRouter()
+
+function toProduct() {
+  router.push({ name: 'product' })
+}
+
+function toCategroy() {
+  router.push({ name: 'categroy' })
+}
+
+// 加载分类数据
+async function loadCategoryData() {
+  if (activeTab.value === 'parent') {
+    await fetchParentCategories()
+  } else {
+    await fetchSonCategories()
+  }
+}
+
+// 获取父级分类
+async function fetchParentCategories() {
+  try {
+    console.log('正在请求父级分类数据...');
+    const res = await api.getparentcategory(searchKeyword.value)
+    console.log('API响应:', res);
+    
+    if (res.code === 1) {
+      parentcategorylist.value = res.data
+      parentTableData.value = res.data.map((item: any) => ({
+        ...item,
+        status: item.status || '启用', // 默认状态
+        parentCategoryName: item.parentCategoryName || '无' // 添加上级分类名称
+      }))
+      totalRecords.value = res.data.length
+      ElMessage.success('父级分类数据加载成功');
+    } else {
+      ElMessage.error(res.msg || '获取父级分类数据失败')
+    }
+  } catch (error: any) {
+    console.error('获取父级分类数据失败:', error);
+    ElMessage.error(error.message || '获取父级分类数据失败')
+  }
+}
+
+// 获取子级分类
+async function fetchSonCategories() {
+  try {
+    console.log('正在请求子级分类数据...');
+    const res = await api.getsoncategory()
+    console.log('API响应:', res);
+    
+    if (res.code === 1) {
+      soncategorylist.value = res.data
+      childTableData.value = res.data.map((item: any) => ({
+        ...item,
+        status: item.status || '启用',
+        parentCategoryName: item.parentCategoryName || '无'
+      }))
+      totalRecords.value = res.data.length
+      ElMessage.success('子级分类数据加载成功');
+    } else {
+      ElMessage.error(res.msg || '获取子级分类数据失败')
+    }
+  } catch (error: any) {
+    console.error('获取子级分类数据失败:', error);
+    ElMessage.error(error.message || '获取子级分类数据失败')
+  }
+}
+
+// --- 交互逻辑 ---
+// 1. 搜索逻辑：点击搜索按钮时触发 API 请求
+async function handleSearch() {
+  await loadCategoryData()
+}
+
+// 2. 重置逻辑
+function resetForm() {
+  searchKeyword.value = ''
+  multipleSelection.value = []
+  loadCategoryData() // 重置后重新加载当前Tab的数据
+}
+
+// 3. 切换Tab逻辑
+async function switchTab(tab: string) {
+  activeTab.value = tab
+  multipleSelection.value = []
+  await loadCategoryData()
+}
+
+// 4. 批量删除逻辑
+async function handleBatchDelete() {
+  if (multipleSelection.value.length === 0) {
+    ElMessage.warning('请先选择要删除的分类')
+    return
+  }
+
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除选中的 ${multipleSelection.value.length} 个分类吗?`,
+      '警告',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    )
+
+    // 发送 DELETE 请求删除选中的分类
+    for (let i = 0; i < multipleSelection.value.length; i++) {
+      const item = multipleSelection.value[i]
+      const res = await api.deletecategory(item.id)
+      if (res.code !== 1) {
+        ElMessage.error(`删除分类 "${item.categoryName}" 失败: ${res.msg}`)
+        return
+      }
+    }
+    
+    ElMessage.success('删除成功')
+    // 重新加载当前 Tab 的数据
+    await loadCategoryData()
+    multipleSelection.value = [] // 清空选中状态
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error('删除操作失败')
+    }
+  }
+}
+
+// 5. 删除单个分类
+async function handleDelete(row: any) {
+  try {
+    await ElMessageBox.confirm(
+      `确定要删除分类 "${row.categoryName}" 吗?`,
+      '警告',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+      }
+    )
+
+    const res = await api.deletecategory(row.id)
+    if (res.code === 1) {
+      ElMessage.success('删除成功')
+      // 重新加载当前 Tab 的数据
+      await loadCategoryData()
+    } else {
+      ElMessage.error(res.msg)
+    }
+  } catch (error: any) {
+    if (error !== 'cancel') {
+      ElMessage.error('删除操作失败')
+    }
+  }
+}
+
+// 6. 表格多选处理
+function handleSelectionChange(val: any[]) {
+  multipleSelection.value = val
+}
+
+// 7. 状态切换 (禁用/启用)
+async function toggleStatus(row: any) {
+  // 获取当前状态并切换
+  const currentStatus = row.status
+  const newStatus = currentStatus === '启用' ? '禁用' : '启用'
+  
+  try {
+    // 构建更新数据对象
+    const updateData = {
+      id: row.id,
+      categoryName: row.categoryName,
+      parentId: row.parentId,
+      status: newStatus,
+      createTime: row.createTime,
+      parentCategoryName: row.parentCategoryName
+    }
+    
+    // 发送更新请求
+    const res = await api.editcategory(updateData)
+    if (res.code !== 1) {
+      throw new Error(res.msg)
+    }
+    
+    // 成功后更新本地数据
+    row.status = newStatus
+    ElMessage.success(`分类 "${row.categoryName}" 状态已更新为 ${newStatus}`)
+  } catch (error: any) {
+    // 失败时恢复原来的状态
+    row.status = currentStatus
+    ElMessage.error(error.message || '状态更新失败')
+  }
+}
+
+// 8. 编辑分类
+async function handleEdit(row: any) {
+  isEditing.value = true
+  dialogVisible.value = true
+  // 将行数据复制到表单
+  Object.assign(categoryForm, {
+    id: row.id,
+    categoryName: row.categoryName,
+    parentId: row.parentId || '',
+    status: row.status || '启用'
+  })
+}
+
+// 9. 打开新增对话框
+function openAddDialog() {
+  isEditing.value = false
+  dialogVisible.value = true
+  // 清空表单
+  Object.assign(categoryForm, {
+    id: '',
+    categoryName: '',
+    parentId: activeTab.value === 'child' ? '' : undefined, // 子类需要选择父类，父类不需要
+    status: '启用'
+  })
+}
+
+// 10. 保存分类（新增或编辑）
+async function saveCategory() {
+  try {
+    let res
+    if (isEditing.value) {
+      // 编辑现有分类
+      console.log('正在编辑分类:', categoryForm);
+      res = await api.editcategory(categoryForm)
+    } else {
+      // 新增分类
+      console.log('正在添加分类:', categoryForm);
+      res = await api.addcategory(categoryForm)
+    }
+    
+    if (res.code === 1) {
+      ElMessage.success(isEditing.value ? '编辑成功' : '添加成功')
+      dialogVisible.value = false
+      // 清空表单
+      Object.assign(categoryForm, {
+        id: '',
+        categoryName: '',
+        parentId: '',
+        status: '启用'
+      })
+      // 重新加载数据
+      await loadCategoryData()
+    } else {
+      ElMessage.error(res.msg)
+    }
+  } catch (error: any) {
+    console.error('保存分类失败:', error);
+    ElMessage.error(error.message || '操作失败')
+  }
+}
+
+// --- 表格行样式控制 ---
+// 当状态为"禁用"时，给行添加特殊类名
+function tableRowClassName({ row }: { row: any }) {
+  if (row.status === '禁用') {
+    return 'disabled-row'
+  }
+  return ''
+}
+</script>
+
+<style scoped>
+/* 顶部导航样式 */
+.top-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 60px;
+  background-color: #409EFF;
+  padding: 0 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 筛选区样式 */
+.product-info-container {
+  padding: 20px;
+  background-color: #f5f7fa;
+  font-family: Arial, sans-serif;
+}
+
+/* 按钮区样式 */
+.action-section {
+  display: flex;
+  gap: 10px;
+  margin-top: 50px;
+}
+
+.nav-left .logo-text {
+  color: #fff;
+  font-size: 22px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+
+.nav-right .user-info {
+  display: flex;
+  align-items: center;
+  color: #fff;
+  gap: 10px;
+  cursor: pointer;
+}
+
+.username {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 标题样式 */
+h1 {
+  margin: 20px 0;
+  font-size: 20px;
+  font-weight: 600;
+  color: #303133;
+}
+
+/* 搜索区域样式 */
+.search-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.search-item {
+  display: flex;
+  align-items: center;
+}
+
+.label_item {
+  width: 80px;
+  flex-shrink: 0;
+  font-size: 14px;
+  color: #606266;
+  font-weight: 500;
+}
+
+.search-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* 表格样式 */
+.table-section {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.product-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+.product-table th,
+.product-table td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #ebeef5;
+}
+
+.product-table th {
+  font-weight: 600;
+  color: #303133;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: #409eff;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+.btn-text:hover {
+  color: #66b1ff;
+}
+
+.btn-text-danger {
+  background: none;
+  border: none;
+  color: #f56c6c;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 14px;
+}
+
+.btn-text-danger:hover {
+  color: #f78989;
+}
+
+.demo-pagination-block {
+  margin-top: 20px;
+  padding: 10px;
+  background: #fff;
+  display: flex;
+  justify-content: center;
+}
+
+/* 新增按钮样式 */
+.add-btn-section {
+  padding: 10px 20px;
+  background-color: white;
+  color: #606266;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.3s;
+  display: flex;
+  margin-bottom: 5px
+  ;
+}
+
+.add-btn-section:hover {
+  color: #409eff;
+  border-color: #c6e2ff;
+  background-color: #ecf5ff;
+}
+
+.title {
+  display: flex;
+  font-size: 33px;
+  margin-bottom: 100px;
+}
+
+/* 禁用行的样式 */
+.disabled-row {
+  opacity: 0.6;
+}
+</style>
+
+
+

@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>企业人员信息表单</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .form-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .form-container h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+
+        .form-group label span {
+            color: #e74c3c;
+        }
+
+        /* 输入框和文本域基础样式 */
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="number"],
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            outline: none;
+        }
+
+        /* 鼠标悬停时变色 */
+        .form-group input[type="text"]:hover,
+        .form-group input[type="email"]:hover,
+        .form-group input[type="tel"]:hover,
+        .form-group input[type="number"]:hover,
+        .form-group select:hover,
+        .form-group textarea:hover {
+            background-color: #f0f7ff;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        /* 获得焦点时的样式 */
+        .form-group input[type="text"]:focus,
+        .form-group input[type="email"]:focus,
+        .form-group input[type="tel"]:focus,
+        .form-group input[type="number"]:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            background-color: #fff;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+        }
+
+        /* 单选按钮和多选按钮容器 */
+        .radio-group,
+        .checkbox-group {
+            display: flex;
+            gap: 20px;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        /* 鼠标悬停在选项组上 */
+        .radio-group:hover,
+        .checkbox-group:hover {
+            background-color: #f0f7ff;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .radio-group label,
+        .checkbox-group label {
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #666;
+            transition: color 0.3s ease;
+        }
+
+        /* 鼠标悬停在选项标签上 */
+        .radio-group label:hover,
+        .checkbox-group label:hover {
+            color: #667eea;
+        }
+
+        .radio-group input[type="radio"],
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+            cursor: pointer;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* 提交按钮样式 */
+        .submit-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        /* 鼠标悬停在提交按钮上 */
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        /* 点击提交按钮时的效果 */
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* 表单底部的说明文字 */
+        .form-footer {
+            margin-top: 20px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h1>企业人员信息登记表</h1>
+        
+        <form>
+            <div class="form-group">
+                <label>姓名 <span>*</span></label>
+                <input type="text" name="name" placeholder="请输入您的姓名" required>
+            </div>
+
+            <div class="form-group">
+                <label>工号 <span>*</span></label>
+                <input type="text" name="employeeId" placeholder="请输入工号" required>
+            </div>
+
+            <div class="form-group">
+                <label>部门</label>
+                <select name="department">
+                    <option value="">请选择部门</option>
+                    <option value="tech">技术部</option>
+                    <option value="product">产品部</option>
+                    <option value="marketing">市场部</option>
+                    <option value="hr">人事部</option>
+                    <option value="finance">财务部</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>职位</label>
+                <input type="text" name="position" placeholder="请输入职位">
+            </div>
+
+            <div class="form-group">
+                <label>电子邮箱 <span>*</span></label>
+                <input type="email" name="email" placeholder="请输入电子邮箱" required>
+            </div>
+
+            <div class="form-group">
+                <label>联系电话 <span>*</span></label>
+                <input type="tel" name="phone" placeholder="请输入联系电话" required>
+            </div>
+
+            <div class="form-group">
+                <label>性别</label>
+                <div class="radio-group">
+                    <label><input type="radio" name="gender" value="male"> 男</label>
+                    <label><input type="radio" name="gender" value="female"> 女</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>技能标签</label>
+                <div class="checkbox-group">
+                    <label><input type="checkbox" name="skill" value="frontend"> 前端开发</label>
+                    <label><input type="checkbox" name="skill" value="backend"> 后端开发</label>
+                    <label><input type="checkbox" name="skill" value="design"> UI设计</label>
+                    <label><input type="checkbox" name="skill" value="product"> 产品设计</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>备注</label>
+                <textarea name="notes" placeholder="请输入备注信息..."></textarea>
+            </div>
+
+            <button type="submit" class="submit-btn">提交信息</button>
+        </form>
+
+        <div class="form-footer">
+            * 为必填项 | 鼠标悬停在表单元素上可查看交互效果
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="../表格A.css">
+</head>
+
+<body>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+
+    <div id="app" class="table-wrapper">
+        <table class="styled-table">
+            <tr v-for="(item,index) in message":key="item.id">
+                <td>{{index}}</td>
+                <td>{{item.name}}</td>
+                <td>{{item.gender==1?'男' : '女'}}</td>
+                <td>
+                    <span v-if="item.job==1">班主任</span>
+                    <span v-else-if="item.job==2">讲师</span>
+                    <span v-else-if="item.job==3">学工主管</span>
+                    <span v-else-if="item.job==4">咨询师</span>
+                    <span v-else="item.job==5">其他</span>
+                    
+                </td>
+                <td>{{item.entrydate}}</td>
+                <td>{{item.updatedatetime}}</td>
+            </tr>
+        </table>
+    </div>
+
+    <script>
+        Vue.createApp({
+            setup() {
+                return {
+                    message: [{ "id": 1, "name": "谢逊",  "gender": 1, "job": "1", "entrydate": "2023-06-09", "updatedatetime": "2024-07-30T14:59:38" },
+                     { "id": 2, "name": "韦一笑",  "gender": 1, "job": "1", "entrydate": "2020-05-09", "updatedatetime": "2023-07-07T00:00:00" },
+                     { "id": 3, "name": "黛绮丝", "gender": 2, "job": "2", "entrydate": "2021-06-01", "updatedatetime": "2023-07-01T00:00:00" }]
+                }
+            }
+        }).mount('#app')
+    </script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        let user = {
+            name: "huang",
+            age: 20,
+            gender: "gentleman",
+            sing: function () {
+                alert(this.name + "hello world")
+            }
+        };
+        console.log(user.name);
+        alert(JSON.stringify(user));
+        let user2='{"name":"zihan","age":14}';
+        alert(JSON.parse(user2).name);
+    </script>
+</body>
+
+</html>

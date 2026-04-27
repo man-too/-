@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        var arr = ["hello", "huang", "zi", "han"];
+        for (var i = 0; i < arr.length; i++) { console.log(arr[i]); }
+        // 遍历
+        console.log(Array.isArray(arr));
+        // 判断是否是数组
+        var length = arr.push("where", "are", "you", "from")
+        console.log(length);
+        // push的返回值是新数组的长度
+        console.log(arr.pop(), arr);
+        // pop 删除的是最后一个，返回值是它删除的元素。
+        console.log(arr.shift(), arr,);
+        // shift删除第一个元素,返回值是它删除的元素。
+        // unshift是在头部添加，返回的是长度
+        var arr=[10,20,30,40];
+        console.log(arr.join());/*默认是逗号*/
+        console.log(arr.join(" "));
+        console.log(arr.join("/"));
+        console.log(arr.concat(10,20,30,40))/*也可以直接写成数组*/
+        
+
+
+    </script>
+</body>
+
+</html>

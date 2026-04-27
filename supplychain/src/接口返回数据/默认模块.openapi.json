@@ -1,0 +1,301 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "默认模块",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/product/categorylist/parent": {
+      "get": {
+        "summary": "显示父分类名称",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "array": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "title": "分类id"
+                              },
+                              "name": {
+                                "type": "string",
+                                "title": "分类名称"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ]
+                          },
+                          "title": "分类数组"
+                        }
+                      },
+                      "title": "分类数据",
+                      "required": [
+                        "array"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/product/categorylist/parent/{parentId}": {
+      "get": {
+        "summary": "根据父类ID显示子类名称",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "parentId",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "array": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "title": "子类ID"
+                              },
+                              "name": {
+                                "type": "string",
+                                "title": "子类名称",
+                                "description": "名称"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ]
+                          },
+                          "title": "子分类数组"
+                        }
+                      },
+                      "required": [
+                        "array"
+                      ],
+                      "title": "子分类数据"
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/product/categorylist/son": {
+      "get": {
+        "summary": "显示子类名称",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "array": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "integer",
+                                "title": "子分类ID"
+                              },
+                              "name": {
+                                "type": "string",
+                                "title": "子分类名称",
+                                "description": "分组"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name"
+                            ]
+                          }
+                        }
+                      },
+                      "title": "子分类数据",
+                      "required": [
+                        "array"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    },
+    "/product/categorylist/son/{id}": {
+      "get": {
+        "summary": "根据子分类ID显示父分类名称",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "",
+            "required": true,
+            "example": 39,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "title": "状态码"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "title": "父类ID"
+                        },
+                        "name": {
+                          "type": "string",
+                          "title": "父类名称",
+                          "description": "分组"
+                        }
+                      },
+                      "title": "返回父类数据",
+                      "required": [
+                        "id",
+                        "name"
+                      ]
+                    },
+                    "msg": {
+                      "type": "string",
+                      "title": "返回信息",
+                      "nullable": true
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "data"
+                  ]
+                }
+              }
+            },
+            "headers": {}
+          }
+        },
+        "security": []
+      }
+    }
+  },
+  "components": {
+    "schemas": {},
+    "responses": {},
+    "securitySchemes": {}
+  },
+  "servers": [],
+  "security": []
+}
