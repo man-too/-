@@ -34,6 +34,13 @@ export default {
             method: 'get'
         })
     },
+    getwarehousename(id:string){
+        return request({
+            url:'/warehouse-info/list',
+            method:'get',
+            params:{id}
+        })
+    },
 
     /**
      * 根据子分类ID获取父分类信息

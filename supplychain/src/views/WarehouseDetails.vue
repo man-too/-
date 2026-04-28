@@ -327,6 +327,10 @@ const handleDelete = (row: any) => {
     ElMessage.success('删除成功')
   })
 }
+onMounted(() => {
+  // 获取仓库列表数据
+  // 获取商品列表数据
+})
 </script>
 
 <style scoped>

@@ -221,7 +221,6 @@ const handleDelete = (index: number) => { tableData.value.splice(index, 1); ElMe
 
 // --- 路由返回逻辑 ---
 const router = useRouter()
-const goBack = () => { router.back() }
 </script>
 
 <style scoped>

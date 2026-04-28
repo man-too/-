@@ -77,9 +77,39 @@
                       <div class="search-item">
                         <label class="label_item">价格区间:</label>
                         <div class="price-range">
-                          <el-input placeholder="最低价" v-model="searchForm.min" />
+                          <el-input placeholder="最低价" v-model="initminprice" 
+                          style="width: calc(100% - 80px);
+                           margin-right: 0px;">
+                                <template #append> 
+                                  <el-select 
+                                    v-model="unit" 
+                                    placeholder="单位" 
+                                    style="width: 50px"
+                                    :suffix-icon="null"
+                                    @change="handleminUnitChange"
+                                  >
+                                    <el-option label="元" :value="1"/>
+                                    <el-option label="千" :value="1000" />
+                                    <el-option label="万" :value="10000" />
+                                  </el-select>
+                                </template>
+                              </el-input>
                           <span>-</span>
-                          <el-input placeholder="最高价" v-model="searchForm.max"/>
+                          <el-input placeholder="最高价" v-model="searchForm.max">
+                            <template #append> 
+                              <el-select 
+                                v-model="unit2" 
+                                placeholder="单位" 
+                                style="width: 50px"
+                                :suffix-icon="null"
+                                @change="handlemaxUnitChange"
+                              >
+                                <el-option label="元" :value="1" />
+                                <el-option label="千" :value="1000" />
+                                <el-option label="万" :value="10000" />
+                              </el-select>
+                            </template>
+                          </el-input>
                         </div>
                       </div>
                     </el-col>
@@ -146,7 +176,7 @@
                 <el-form
                   :model="addform"
                   :rules="rules"
-                  ref="productFormRef"
+                  ref="addFormRef"
                   label-width="100px"
                   label-position="right"
                 >
@@ -209,7 +239,7 @@
                 <!-- 底部按钮 -->
                 <template #footer>
                   <span class="dialog-footer">
-                    <el-button @click="dialogVisible1 = false">取消</el-button>
+                    <el-button @click="cancelAdd">取消</el-button>
                     <el-button type="primary" @click="submitaddForm">
                       确定
                     </el-button>
@@ -250,10 +280,10 @@
                 >
                   <!-- 表单区域 -->
                   <el-form
-                    :model="addform"
+                    :model="editform"
                     :rules="rules"
-                    ref="productFormRef"
-                    label-width="100px"
+                    ref="editFormRef"
+                    label-width="100px" 
                     label-position="right"
                   >
                     <!-- 1. 中文名称 (productName) -->
@@ -349,14 +379,12 @@
 <script lang="ts" setup>
 import { ElContainer} from "element-plus";
 import { ref, onMounted,reactive} from "vue";
-import { ElMessage } from "element-plus";
+import { ElMessage,FormInstance  } from "element-plus";
 import { Calendar } from '@element-plus/icons-vue'
 import type { ComponentSize } from 'element-plus'
 import api from "@/apis/商品管理.ts";
 import publicapi from "@/apis/public.ts";
 import { useRouter } from "vue-router";
-import type { editformtype } from "@/apis/商品管理.ts";
-import { get } from "node_modules/axios/index.d.cts";
 const router = useRouter()
 const currentPage = ref(4)
 const pageSize = ref(100) 
@@ -365,11 +393,12 @@ const background = ref(false)
 const disabled = ref(false)
 const productCode=ref('')
 const productName=ref('')
-const selectedProductIds = ref<number[]>([])
 const productList = ref([])
 const selectIDs = ref('')
 const dialogVisible = ref(false)
 const dialogVisible1=ref(false)
+const addFormRef = ref<FormInstance>()
+const editFormRef = ref<FormInstance>()
 const rules = reactive({
   productName: [
     { required: true, message: '请输入中文名称', trigger: 'blur' },
@@ -392,7 +421,7 @@ async function getcategoryList() {
       console.log('分类列表数据:', categoryList.value)
     }
     else {
-      ElMessage.error(res.message)
+      ElMessage.error(res.msg)
     }
   } catch (error) {
     console.error(error)
@@ -405,8 +434,8 @@ const searchForm = ref({
   page: currentPage.value,
   productCode: undefined as string | undefined,
   productName: undefined as string | undefined,
-  min: undefined as string | undefined,
-  max: undefined as string | undefined,
+  min: undefined as number| undefined,
+  max: undefined as number | undefined,
   start: undefined as string | undefined,
   end: undefined as string | undefined,
   categroyId: undefined as number | undefined
@@ -424,15 +453,17 @@ const addform = reactive({
     "volume":undefined
 })
 const editform = ref({
-    "productName":undefined,
-    "productCode": undefined,
-    "categoryId":undefined,
-    "price": undefined,
-    "spec": undefined,
-    "unit": undefined,
-    "costPrice": undefined,
-    "weight": undefined,
-    "volume":undefined,
+    "id":null,
+    "productName":'',
+    "categoryName": '',
+    "productCode": '',
+    "categoryId":null,
+    "price": null,
+    "spec": '',
+    "unit": '',
+    "costPrice": null,
+    "weight": null,
+    "volume":null,
 })
 onMounted(() => {
   getcategoryList(); 
@@ -495,7 +526,9 @@ async function handleEdit(res:any) {
   try{
   const editid=res.id
   const data=await api.geteditdata(editid)
+  editform.value.id=editid
   if(data.code===1){
+  editform.value.categoryName = data.data.categoryName;
   editform.value.productName = data.data.productName;
   editform.value.productCode = data.data.productCode;
   editform.value.categoryId = data.data.categoryId; 
@@ -532,36 +565,68 @@ async function getproductList(params?:any) {
 }
 // 提交按钮
 async function submiteditForm() {
-  try {
-    const res = await api.edit(editform.value)
-    if (res.code === 1) {
-      ElMessage.success(res.msg)
-      dialogVisible.value = false
-      getproductList()
+  if (!editFormRef.value) return;
+
+  await editFormRef.value.validate((valid) => {
+    if (valid) {
+      api.edit(editform.value).then(res => {
+        if (res.code === 1) {
+          ElMessage.success(res.msg);
+          dialogVisible.value = false;
+          getproductList();
+        } else {
+          ElMessage.error(res.msg);
+        }
+      }).catch(error => {
+        ElMessage.error(error.message || '网络错误');
+      });
+    } else {
+      ElMessage.warning('请填写必填项');
     }
-    else {
-      ElMessage.error(res.msg)
-    }
-  } catch (error:any) {
-    ElMessage.error(error.message)
+  });
+}
+// 提交添加表单
+async function cancelAdd() {
+  addform.productName=undefined,
+  addform.productCode=undefined,
+  addform.categoryId=undefined,
+  addform.price=undefined,
+  addform.spec=undefined,
+  addform.unit=undefined,
+  addform.costPrice=undefined,
+  addform.weight=undefined,
+  addform.volume=undefined
+  dialogVisible1.value=false
+    if (addFormRef.value) {
+    addFormRef.value.clearValidate();
   }
 }
-
-// 提交添加表单
 async function submitaddForm() {
-  try {
-    const res = await api.add(addform)
-    if (res.code === 1) {
-      ElMessage.success(res.msg)
-      dialogVisible1.value = false
-      getproductList()
+  // 先检查 ref 是否存在
+  if (!addFormRef.value) return;
+
+  // 执行校验
+  await addFormRef.value.validate((valid, fields) => {
+    if (valid) {
+      // 校验通过，发送请求
+      api.add(addform).then(res => {
+        if (res.code === 1) {
+          ElMessage.success(res.msg);
+          dialogVisible1.value = false;
+          cancelAdd(); // 重置表单
+          getproductList();
+        } else {
+          ElMessage.error(res.msg);
+        }
+      }).catch(error => {
+        ElMessage.error(error.message || '网络错误');
+      });
+    } else {
+      //  校验失败
+      console.log('error submit!', fields);
+      ElMessage.warning('请填写必填项');
     }
-    else {
-      ElMessage.error(res.msg)
-    }
-  } catch (error:any) {
-    ElMessage.error(error.message)
-  }
+  });
 }
 async function handleSizeChange(pagesize:number) {
   searchForm.value.pageSize = pagesize;
@@ -596,6 +661,37 @@ async function Delete() {
     }
   } catch (error:any) {
     ElMessage.error(error.message)
+  }
+}
+// 单位转换
+const unit=ref(1)
+const initminprice=ref(0)
+function handleminUnitChange() { 
+  if(searchForm.value.min!==undefined){
+  if(unit.value===1000){
+    searchForm.value.min=initminprice.value*1000
+  }
+  if(unit.value===10000){
+    searchForm.value.min=searchForm.value.min*10000
+  }
+  if(unit.value===1){
+    searchForm.value.min=initminprice.value
+  }
+ }
+}
+const unit2=ref(1)
+const initmaxprice=ref(0)
+function handlemaxUnitChange() { 
+  if(searchForm.value.max!==undefined){
+  if(unit2.value===1000){
+    searchForm.value.max=initmaxprice.value*1000
+  }
+  if(unit2.value===10000){
+    searchForm.value.max=searchForm.value.max*10000
+  }
+  if(unit2.value===1){
+    searchForm.value.max=initmaxprice.value
+  }
   }
 }
 </script>

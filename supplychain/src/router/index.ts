@@ -35,17 +35,17 @@ const routes: RouteRecordRaw[] = [
             {
                 path:'/warehouse',
                 name:'warehouse',
-                component:()=>import('@/views/Warehouse Manage.vue')
+                component:()=>import('@/views/WarehouseManage.vue')
             },
             {
                 path:'/details',
                 name:'details',
-                component:()=>import('@/views/Warehouse Details.vue')
+                component:()=>import('@/views/WarehouseDetails.vue')
             },
             {
                 path:'/location',
                 name:'location',
-                component:()=>import('@/views/Storage Location.vue')
+                component:()=>import('@/views/StorageLocation.vue')
             },
             {
                 path:'/stocking',

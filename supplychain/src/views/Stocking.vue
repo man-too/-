@@ -309,6 +309,8 @@ function handleAdd(){
 const handleDelete = () => {};
 const handleSubmit = () => {};
 const handleInStock = () => {};
+const handleSizeChange = () => {}
+const handleCurrentChange = () => {}
 </script>
 
 <style scoped>

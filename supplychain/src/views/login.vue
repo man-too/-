@@ -54,12 +54,9 @@ async function handleLogin() {
  try{
   if(form.code==200){
     ElMessage.success('登录成功')
-    localStorage.setItem('token',form.data.token)
-    localStorage.setItem('username',form.data.username)
-    localStorage.setItem('userid',form.data.userid)
     router.push('/')
   }else{
-    ElMessage.error(form.msg)
+    ElMessage.error('登陆失败')
   }
  }catch(error:any){ 
   ElMessage.error(error.message)

@@ -10,28 +10,18 @@
     end?:string,
     categroyId?:number
  }
- interface editquery {
-    id:number,
-    productCode:string,
-    productName:string,
-    productPrice:number,
-    productNum:number,
-    productDesc:string,
-    productImg:string,
-    categroyId:number
- }
  interface editformtype{
-        id: number,
+        id?: number | null,
         categoryName: string,
         productName: string,
         productCode: string,
-        categoryID: number,
-        price: number,
+        categoryId: number | null,
+        price: number | null,
         spec: string,
         unit: string,
-        costPrice:number ,
-        weight:number ,
-        volume:number ,
+        costPrice:number | null,
+        weight:number | null,
+        volume:number | null ,
  }
 export default{
     getgoodlist(params?:pagequery){
